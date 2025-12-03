@@ -115,7 +115,7 @@ function PairContent() {
             <div className="w-6 h-6 bg-white rounded flex items-center justify-center mr-2">
               <span className="text-black font-bold text-xs">X</span>
             </div>
-            <span className="font-semibold">X-kira MD</span>
+            <span className="font-semibold">x-kira Bot</span>
           </Link>
           <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             ← Back to Home
@@ -135,10 +135,10 @@ function PairContent() {
                 </div>
               )}
               <h1 className="text-5xl md:text-6xl font-bold mb-4">
-                <span className="text-gradient">X-kira</span> <span className="text-muted-foreground">Pair</span>
+                <span className="text-gradient">x-kira Bot</span> <span className="text-muted-foreground">Pairing</span>
               </h1>
               <p className="text-lg text-muted-foreground">
-                Enter your WhatsApp number to get your pairing code
+                Enter your WhatsApp number with country code to receive your pairing code
               </p>
             </div>
 
@@ -179,8 +179,13 @@ function PairContent() {
                     <svg className="w-16 h-16 mx-auto mb-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <h2 className="text-2xl font-bold mb-2">Pair Code Generated!</h2>
-                    <p className="text-sm mb-4">Enter this code in WhatsApp: Link a Device</p>
+                    <h2 className="text-2xl font-bold mb-2">Your Pairing Code is Ready!</h2>
+                    <p className="text-sm mb-4">
+                      1. Open WhatsApp<br/>
+                      2. Tap Menu (⋮) → Linked Devices<br/>
+                      3. Tap "Link a Device"<br/>
+                      4. Enter this 8-digit code:
+                    </p>
                     <div className="bg-black/30 rounded-lg p-4 mb-4">
                       <p className="text-4xl font-mono font-bold tracking-wider">{pairCode}</p>
                     </div>
@@ -222,7 +227,7 @@ function PairContent() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                     <h2 className="text-2xl font-bold mb-2">Number Blocked</h2>
-                    <p className="text-lg">You are blocked. Please contact the developer.</p>
+                    <p className="text-lg">This number has been blocked from using x-kira Bot. Please contact support if you believe this is an error.</p>
                   </div>
                   <button
                     onClick={() => {
@@ -242,8 +247,8 @@ function PairContent() {
                     <svg className="w-16 h-16 mx-auto mb-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <h2 className="text-2xl font-bold mb-2">Already Connected</h2>
-                    <p className="text-lg">This number is already connected to a bot. Please disconnect from WhatsApp and try again.</p>
+                    <h2 className="text-2xl font-bold mb-2">Already Paired</h2>
+                    <p className="text-lg">This number is already paired with x-kira Bot. If you want to re-pair, first unlink the device from WhatsApp (Linked Devices → Remove Device), then try again.</p>
                   </div>
                   <button
                     onClick={() => {
@@ -284,9 +289,13 @@ function PairContent() {
 
             <div className="mt-8 text-center">
               <p className="text-sm text-muted-foreground">
-                Need help? Check out our{' '}
+                Need help pairing? Check our{' '}
                 <a href="/#getting-started" className="text-indigo-400 hover:underline">
-                  getting started guide
+                  step-by-step pairing guide
+                </a>
+                {' '}or visit our{' '}
+                <a href="https://github.com/sumon9836" className="text-indigo-400 hover:underline">
+                  GitHub
                 </a>
               </p>
             </div>

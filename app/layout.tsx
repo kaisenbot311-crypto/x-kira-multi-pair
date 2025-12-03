@@ -14,17 +14,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "X-kira MD - FREE WhatsApp Bot",
-  description: "Free WhatsApp Bot with advanced features. Pair your WhatsApp number and start using X-kira MD bot today.",
-  keywords: ["whatsapp bot", "x-kira", "whatsapp automation", "free bot", "pairing"],
-  authors: [{ name: "X-kira MD" }],
-  creator: "X-kira MD",
+  title: "x-kira Bot - Free WhatsApp Bot Pairing",
+  description: "Pair x-kira Bot to your WhatsApp for free! Get your pairing code instantly and link using WhatsApp's 'Link a Device' feature. Access powerful bot commands, downloads, AI chat, and more.",
+  keywords: ["whatsapp bot", "x-kira bot", "whatsapp pairing", "free bot", "whatsapp bot pairing code", "link whatsapp device"],
+  authors: [{ name: "x-kira Bot" }],
+  creator: "x-kira Bot",
   openGraph: {
     type: "website",
     locale: "en_US",
-    title: "X-kira MD - FREE WhatsApp Bot",
-    description: "Free WhatsApp Bot with advanced features",
-    siteName: "X-kira MD",
+    title: "x-kira Bot - Free WhatsApp Bot Pairing",
+    description: "Pair x-kira Bot to your WhatsApp for free! Get instant pairing codes and access powerful bot features.",
+    siteName: "x-kira Bot",
   },
   robots: {
     index: true,
