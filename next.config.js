@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'static.ryznn.xyz',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.giphy.com',
+      },
     ],
   },
   allowedDevOrigins: ['*'],
