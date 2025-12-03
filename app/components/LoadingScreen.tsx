@@ -29,61 +29,10 @@ export default function LoadingScreen() {
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.1 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
-          className={`fixed inset-0 flex flex-col items-center justify-center overflow-hidden ${
+          className={`fixed inset-0 flex flex-col items-center justify-center overflow-hidden bg-black ${
             isFirstVisit ? 'z-[100]' : 'z-[200]'
           }`}
-          style={{
-            background: 'linear-gradient(135deg, #0a0a0a 0%, #0f172a 25%, #1e1b4b 50%, #0f172a 75%, #0a0a0a 100%)',
-          }}
         >
-          <div 
-            className="absolute inset-0 opacity-30"
-            style={{
-              background: 'radial-gradient(ellipse at 50% 0%, rgba(59, 130, 246, 0.3) 0%, transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(99, 102, 241, 0.2) 0%, transparent 40%), radial-gradient(ellipse at 20% 60%, rgba(14, 165, 233, 0.15) 0%, transparent 40%)',
-            }}
-          />
-
-          <motion.div
-            animate={{
-              opacity: [0.1, 0.3, 0.1],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="absolute top-1/4 left-1/3 w-[400px] h-[400px] rounded-full blur-[120px]"
-            style={{
-              background: 'radial-gradient(circle, rgba(59, 130, 246, 0.4) 0%, transparent 70%)',
-            }}
-          />
-
-          <motion.div
-            animate={{
-              opacity: [0.15, 0.25, 0.15],
-              scale: [1.1, 0.9, 1.1],
-            }}
-            transition={{
-              duration: 5,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1
-            }}
-            className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] rounded-full blur-[100px]"
-            style={{
-              background: 'radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%)',
-            }}
-          />
-
-          <div 
-            className="absolute inset-0 opacity-5"
-            style={{
-              backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
-              backgroundSize: '50px 50px',
-            }}
-          />
-
           <motion.div
             initial={{ y: 200, opacity: 0, scale: 0.8 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
@@ -106,18 +55,18 @@ export default function LoadingScreen() {
               className="relative"
             >
               <div 
-                className="absolute inset-0 blur-2xl opacity-60"
+                className="absolute inset-0 blur-3xl opacity-40"
                 style={{
-                  background: 'radial-gradient(circle, rgba(59, 130, 246, 0.5) 0%, transparent 70%)',
-                  transform: 'scale(1.5)',
+                  background: 'radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, transparent 70%)',
+                  transform: 'scale(1.8)',
                 }}
               />
               <motion.img
                 src="https://i.giphy.com/Hx48Na3LBp1Dy.webp"
                 alt="Loading"
-                className="w-48 h-48 md:w-64 md:h-64 object-contain relative z-10 rounded-2xl"
+                className="w-72 h-72 md:w-96 md:h-96 object-contain relative z-10 rounded-2xl"
                 style={{
-                  filter: 'drop-shadow(0 0 30px rgba(59, 130, 246, 0.5))',
+                  filter: 'drop-shadow(0 0 40px rgba(59, 130, 246, 0.4))',
                 }}
                 initial={{ rotate: -5 }}
                 animate={{ rotate: [0, 3, 0, -3, 0] }}
@@ -133,31 +82,42 @@ export default function LoadingScreen() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8, duration: 0.6 }}
-              className="mt-10 flex flex-col items-center"
+              className="mt-8 flex flex-col items-center"
             >
               <motion.h1
-                className="text-3xl md:text-4xl font-bold tracking-wide"
-                style={{
-                  background: 'linear-gradient(135deg, #ffffff 0%, #93c5fd 50%, #3b82f6 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  textShadow: '0 0 40px rgba(59, 130, 246, 0.3)',
-                }}
+                className="text-3xl md:text-5xl font-bold tracking-wide text-center"
               >
-                X-KIRA
+                <span 
+                  style={{
+                    background: 'linear-gradient(90deg, #ffffff 0%, #60a5fa 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  x-kira
+                </span>
+                <span className="text-white mx-2">Bot</span>
+                <motion.span 
+                  animate={{
+                    opacity: [1, 0.5, 1],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  style={{
+                    background: 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 50%, #93c5fd 100%)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  Loading
+                </motion.span>
               </motion.h1>
-              
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.6 }}
-                transition={{ delay: 1, duration: 0.5 }}
-                className="mt-2 text-sm text-blue-200/60 tracking-widest uppercase"
-              >
-                Loading
-              </motion.p>
 
               <motion.div 
-                className="mt-6 flex gap-2"
+                className="mt-8 flex gap-3"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.2 }}
@@ -175,25 +135,16 @@ export default function LoadingScreen() {
                       delay,
                       ease: "easeInOut"
                     }}
-                    className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-600"
+                    className="w-2.5 h-2.5 rounded-full"
                     style={{
-                      boxShadow: '0 0 10px rgba(59, 130, 246, 0.8)',
+                      background: 'linear-gradient(135deg, #ffffff 0%, #3b82f6 100%)',
+                      boxShadow: '0 0 15px rgba(59, 130, 246, 0.8)',
                     }}
                   />
                 ))}
               </motion.div>
             </motion.div>
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.1 }}
-            transition={{ delay: 0.5 }}
-            className="absolute bottom-0 left-0 right-0 h-32"
-            style={{
-              background: 'linear-gradient(to top, rgba(59, 130, 246, 0.2) 0%, transparent 100%)',
-            }}
-          />
         </motion.div>
       )}
     </AnimatePresence>
