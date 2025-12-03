@@ -3,6 +3,7 @@
 import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 function PairContent() {
   const searchParams = useSearchParams();
@@ -127,22 +128,47 @@ function PairContent() {
       <section className="py-24 relative overflow-hidden min-h-[80vh] flex items-center">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-black/20"></div>
         <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-2xl mx-auto">
+          <motion.div 
+            className="max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
             <div className="text-center mb-12">
               {serverId && (
-                <div className="inline-block px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 mb-4">
+                <motion.div 
+                  className="inline-block px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 mb-4"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
                   <span className="text-sm text-indigo-300 font-medium">Server {serverId}</span>
-                </div>
+                </motion.div>
               )}
-              <h1 className="text-5xl md:text-6xl font-bold mb-4">
+              <motion.h1 
+                className="text-5xl md:text-6xl font-bold mb-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
                 <span className="text-gradient">x-kira Bot</span> <span className="text-muted-foreground">Pairing</span>
-              </h1>
-              <p className="text-lg text-muted-foreground">
+              </motion.h1>
+              <motion.p 
+                className="text-lg text-muted-foreground"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
                 Enter your WhatsApp number with country code to receive your pairing code
-              </p>
+              </motion.p>
             </div>
 
-            <div className="card-hover rounded-lg p-8">
+            <motion.div 
+              className="card-hover rounded-lg p-8"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+            >
               {!success && !error && (
                 <div className="space-y-6">
                   <div>
@@ -174,11 +200,24 @@ function PairContent() {
               )}
 
               {success && pairCode && (
-                <div className="text-center space-y-6 animate-fade-in">
+                <motion.div 
+                  className="text-center space-y-6"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
                   <div className="success-green rounded-lg p-6">
-                    <svg className="w-16 h-16 mx-auto mb-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <motion.svg 
+                      className="w-16 h-16 mx-auto mb-4 text-green-400" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    </motion.svg>
                     <h2 className="text-2xl font-bold mb-2">Your Pairing Code is Ready!</h2>
                     <p className="text-sm mb-4">
                       1. Open WhatsApp<br/>
@@ -207,17 +246,19 @@ function PairContent() {
                       {copied ? 'Copied!' : 'Copy Code'}
                     </button>
                   </div>
-                  <button
+                  <motion.button
                     onClick={() => {
                       setSuccess(false);
                       setPairCode('');
                       setPhoneNumber('');
                     }}
                     className="secondary-button px-6 py-2 rounded-lg font-semibold"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
                     Generate Another Code
-                  </button>
-                </div>
+                  </motion.button>
+                </motion.div>
               )}
 
               {error === 'blocked' && (
