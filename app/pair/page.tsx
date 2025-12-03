@@ -327,19 +327,20 @@ function PairContent() {
                 </div>
               )}
 
-            <div className="mt-8 text-center">
-              <p className="text-sm text-muted-foreground">
-                Need help pairing? Check our{' '}
-                <a href="/#getting-started" className="text-indigo-400 hover:underline">
-                  step-by-step pairing guide
-                </a>
-                {' '}or visit our{' '}
-                <a href="https://github.com/sumon9836" className="text-indigo-400 hover:underline">
-                  GitHub
-                </a>
-              </p>
-            </div>
-          </div>
+              <div className="mt-8 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Need help pairing? Check our{' '}
+                  <a href="/#getting-started" className="text-indigo-400 hover:underline">
+                    step-by-step pairing guide
+                  </a>
+                  {' '}or visit our{' '}
+                  <a href="https://github.com/sumon9836" className="text-indigo-400 hover:underline">
+                    GitHub
+                  </a>
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
     </div>
