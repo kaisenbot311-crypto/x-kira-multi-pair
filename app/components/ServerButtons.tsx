@@ -16,6 +16,30 @@ interface ServersResponse {
   timestamp: string;
 }
 
+function getUserCountColor(count: number): string {
+  if (count <= 20) {
+    return 'text-sky-400';
+  } else if (count <= 50) {
+    return 'text-yellow-400';
+  } else if (count <= 100) {
+    return 'text-orange-400';
+  } else {
+    return 'text-red-500';
+  }
+}
+
+function getStatusColor(count: number): string {
+  if (count <= 20) {
+    return 'bg-green-500';
+  } else if (count <= 50) {
+    return 'bg-yellow-400';
+  } else if (count <= 100) {
+    return 'bg-orange-400';
+  } else {
+    return 'bg-red-500';
+  }
+}
+
 export default function ServerButtons() {
   const [servers, setServers] = useState<ServerInfo[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,11 +69,9 @@ export default function ServerButtons() {
 
   if (loading) {
     return (
-      <div className="flex flex-wrap gap-4 justify-center">
-        <div className="animate-pulse flex gap-4">
-          <div className="h-12 w-40 bg-muted/30 rounded-lg"></div>
-          <div className="h-12 w-40 bg-muted/30 rounded-lg"></div>
-        </div>
+      <div className="flex flex-col gap-4 w-full max-w-xl mx-auto">
+        <div className="animate-pulse h-16 bg-gradient-to-r from-blue-500/20 to-white/10 rounded-xl"></div>
+        <div className="animate-pulse h-16 bg-gradient-to-r from-blue-500/20 to-white/10 rounded-xl"></div>
       </div>
     );
   }
@@ -63,25 +85,30 @@ export default function ServerButtons() {
   }
 
   return (
-    <div className="flex flex-wrap gap-4 justify-center">
+    <div className="flex flex-col gap-4 w-full max-w-xl mx-auto">
       {servers.map((server) => (
         <Link
           key={server.id}
           href={server.id === 0 ? '/pair' : `/pair?server=${server.id}`}
-          className={`group relative glow-button px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
-            !server.available ? 'opacity-50 pointer-events-none' : ''
+          className={`group relative w-full rounded-xl font-semibold transition-all duration-300 overflow-hidden ${
+            !server.available ? 'opacity-50 pointer-events-none' : 'hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/20'
           }`}
+          style={{
+            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(59, 130, 246, 0.2) 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(10px)',
+          }}
         >
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${server.available ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></span>
-              <span>{server.name}</span>
+          <div className="flex items-center justify-between px-8 py-5">
+            <div className="flex items-center gap-4">
+              <span className={`w-3 h-3 rounded-full ${server.available ? getStatusColor(server.userCount) : 'bg-gray-500'} ${server.available && server.userCount <= 50 ? 'animate-pulse' : ''}`}></span>
+              <span className="text-lg text-white font-medium">{server.name}</span>
             </div>
-            <div className="flex items-center gap-1 text-sm opacity-80">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            <div className={`flex items-center gap-2 ${getUserCountColor(server.userCount)}`}>
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
               </svg>
-              <span>{server.userCount}</span>
+              <span className="text-lg font-bold">{server.userCount}</span>
             </div>
           </div>
         </Link>
