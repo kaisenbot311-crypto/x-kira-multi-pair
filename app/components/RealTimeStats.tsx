@@ -1,38 +1,33 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-
-interface Session {
-  connected: boolean;
-  user: string;
-  jid: string;
-  healthy: boolean;
-}
-
-interface SessionsResponse {
-  total: number;
-  healthy: number;
-  sessions: Record<string, Session>;
-}
+import { useState, useEffect, useRef } from 'react';
+import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 
 export default function RealTimeStats() {
   const [totalSessions, setTotalSessions] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => Math.round(latest));
+  const displayCount = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const unsubscribe = rounded.on('change', (latest) => {
+      if (displayCount.current) {
+        displayCount.current.textContent = `${latest}+`;
+      }
+    });
+    return () => unsubscribe();
+  }, [rounded]);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch('/api/sessions', {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
-        });
+        const response = await fetch('/api/sessions');
         if (response.ok) {
           const data = await response.json();
-          console.log('Real-time stats updated:', data);
-          setTotalSessions(data.total || 0);
+          const newTotal = data.total || 0;
+          setTotalSessions(newTotal);
+          animate(count, newTotal, { duration: 1.5, ease: 'easeOut' });
         }
         setLoading(false);
       } catch (error) {
@@ -41,30 +36,38 @@ export default function RealTimeStats() {
       }
     };
 
-    // Fetch immediately
     fetchStats();
-
-    // Refresh every 10 seconds for more real-time updates
-    const interval = setInterval(fetchStats, 10000);
-
+    const interval = setInterval(fetchStats, 15000);
     return () => clearInterval(interval);
-  }, []);
+  }, [count]);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
       transition={{ duration: 0.8 }}
-      className="text-center"
+      className="text-center py-8"
     >
-      <div className="text-4xl md:text-5xl font-bold mb-2">
+      <motion.div 
+        className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 mb-4"
+        whileHover={{ scale: 1.02 }}
+      >
+        <span className="relative flex h-3 w-3">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+        </span>
+        <span className="text-sm text-muted-foreground">Live Stats</span>
+      </motion.div>
+      
+      <div className="text-5xl md:text-6xl font-bold mb-3 text-gradient">
         {loading ? (
           <span className="animate-pulse">--</span>
         ) : (
-          <span>{totalSessions}+</span>
+          <span ref={displayCount}>{totalSessions}+</span>
         )}
       </div>
-      <div className="text-muted-foreground">Active Deployments</div>
+      <div className="text-lg text-muted-foreground">Active Bot Deployments</div>
     </motion.div>
   );
 }

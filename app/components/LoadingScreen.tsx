@@ -11,10 +11,12 @@ export default function LoadingScreen() {
     const hasVisited = sessionStorage.getItem('hasVisited');
     setIsFirstVisit(!hasVisited);
 
+    const loadTime = hasVisited ? 800 : 1500;
+
     const timer = setTimeout(() => {
       setIsLoading(false);
       sessionStorage.setItem('hasVisited', 'true');
-    }, 3000);
+    }, loadTime);
 
     return () => {
       clearTimeout(timer);

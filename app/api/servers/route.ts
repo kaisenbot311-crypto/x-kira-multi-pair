@@ -1,16 +1,9 @@
 import { NextResponse } from 'next/server';
 
-interface Session {
-  connected: boolean;
-  user: string;
-  jid: string;
-  healthy: boolean;
-}
-
 interface SessionsResponse {
   total: number;
   healthy: number;
-  sessions: Record<string, Session>;
+  sessions: Record<string, unknown>;
 }
 
 interface ServerInfo {
@@ -20,94 +13,51 @@ interface ServerInfo {
   available: boolean;
 }
 
+async function fetchServerInfo(apiUrl: string, id: number, name: string): Promise<ServerInfo> {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    const response = await fetch(`${apiUrl}/sessions`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' },
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+    
+    clearTimeout(timeoutId);
+
+    if (response.ok) {
+      const data: SessionsResponse = await response.json();
+      return { id, name, userCount: data.total || 0, available: true };
+    }
+    return { id, name, userCount: 0, available: false };
+  } catch {
+    return { id, name, userCount: 0, available: false };
+  }
+}
+
 export async function GET() {
-  const servers: ServerInfo[] = [];
+  const serverPromises: Promise<ServerInfo>[] = [];
   
   for (let i = 1; i <= 10; i++) {
     const apiUrl = process.env[`API_${i}`];
-    
     if (apiUrl) {
-      let userCount = 0;
-      let available = true;
-      
-      try {
-        const response = await fetch(`${apiUrl}/sessions`, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-          },
-          cache: 'no-store',
-          next: { revalidate: 0 }
-        });
-
-        if (response.ok) {
-          const data: SessionsResponse = await response.json();
-          userCount = data.total || 0;
-        } else {
-          available = false;
-        }
-      } catch (error) {
-        console.error(`Error fetching sessions for API_${i}:`, error);
-        available = false;
-      }
-      
-      servers.push({
-        id: i,
-        name: `Server ${i}`,
-        userCount,
-        available
-      });
+      serverPromises.push(fetchServerInfo(apiUrl, i, `Server ${i}`));
     }
   }
 
-  if (servers.length === 0) {
+  if (serverPromises.length === 0) {
     const legacyApiUrl = process.env.NEXT_PUBLIC_API;
     if (legacyApiUrl) {
-      let userCount = 0;
-      let available = true;
-      
-      try {
-        const response = await fetch(`${legacyApiUrl}/sessions`, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json',
-          },
-          cache: 'no-store',
-          next: { revalidate: 0 }
-        });
-
-        if (response.ok) {
-          const data: SessionsResponse = await response.json();
-          userCount = data.total || 0;
-        } else {
-          available = false;
-        }
-      } catch (error) {
-        console.error('Error fetching sessions for legacy API:', error);
-        available = false;
-      }
-      
-      servers.push({
-        id: 0,
-        name: 'Server',
-        userCount,
-        available
-      });
+      serverPromises.push(fetchServerInfo(legacyApiUrl, 0, 'Server'));
     }
   }
 
+  const servers = await Promise.all(serverPromises);
+
   return NextResponse.json(
-    { 
-      servers,
-      totalServers: servers.length,
-      timestamp: new Date().toISOString()
-    },
-    {
-      headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      }
-    }
+    { servers, totalServers: servers.length, timestamp: new Date().toISOString() },
+    { headers: { 'Cache-Control': 'public, s-maxage=5, stale-while-revalidate=10' } }
   );
 }

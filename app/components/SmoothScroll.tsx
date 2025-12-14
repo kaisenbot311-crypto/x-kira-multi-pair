@@ -11,9 +11,22 @@ export default function SmoothScroll() {
       return;
     }
 
+    const wrapper = document.documentElement;
+    const content = document.body;
+    
+    wrapper.style.position = 'relative';
+    content.style.position = 'relative';
+
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.0,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
+      wrapper: wrapper,
+      content: content,
     });
 
     let frameId: number;
