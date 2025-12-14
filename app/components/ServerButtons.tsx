@@ -1,10 +1,10 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Users, Activity, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Users, Activity, AlertCircle } from 'lucide-react';
 
 interface ServerInfo {
   id: number;
@@ -43,47 +43,64 @@ function getStatusLabel(count: number, available: boolean): string {
   return 'Full';
 }
 
+function ServerSkeleton({ count = 3 }: { count?: number }) {
+  return (
+    <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto">
+      {Array.from({ length: count }).map((_, i) => (
+        <motion.div
+          key={i}
+          className="h-24 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-2xl border border-white/10"
+          initial={{ opacity: 0.3 }}
+          animate={{ opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function ServerButtons() {
   const [servers, setServers] = useState<ServerInfo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchServers = async () => {
-      try {
-        const response = await fetch('/api/servers');
-        if (!response.ok) {
-          throw new Error('Failed to fetch servers');
-        }
-        const data: ServersResponse = await response.json();
-        setServers(data.servers);
-      } catch (err) {
-        console.error('Error fetching servers:', err);
+  const fetchServers = useCallback(async (retryAttempt = 0) => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      
+      const response = await fetch('/api/servers', {
+        signal: controller.signal,
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch servers');
+      }
+      const data: ServersResponse = await response.json();
+      setServers(data.servers);
+      setError('');
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching servers:', err);
+      if (retryAttempt < 2) {
+        setTimeout(() => fetchServers(retryAttempt + 1), 2000);
+      } else {
         setError('Failed to load servers');
-      } finally {
         setLoading(false);
       }
-    };
-
-    fetchServers();
-    const interval = setInterval(fetchServers, 30000);
-    return () => clearInterval(interval);
+    }
   }, []);
 
+  useEffect(() => {
+    fetchServers(0);
+    const interval = setInterval(() => fetchServers(0), 30000);
+    return () => clearInterval(interval);
+  }, [fetchServers]);
+
   if (loading) {
-    return (
-      <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto">
-        {[1, 2].map((i) => (
-          <motion.div
-            key={i}
-            className="h-24 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-2xl border border-white/10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: [0.3, 0.6, 0.3], y: 0 }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
-          />
-        ))}
-      </div>
-    );
+    return <ServerSkeleton count={3} />;
   }
 
   if (error || servers.length === 0) {
@@ -95,6 +112,12 @@ export default function ServerButtons() {
       >
         <AlertCircle className="w-12 h-12 mx-auto mb-3 text-yellow-500" />
         <p>No servers available at the moment. Please try again later.</p>
+        <button 
+          onClick={() => { setLoading(true); setError(''); fetchServers(0); }}
+          className="mt-4 px-4 py-2 rounded-lg bg-indigo-500/20 border border-indigo-500/30 hover:bg-indigo-500/30 transition-colors"
+        >
+          Retry
+        </button>
       </motion.div>
     );
   }

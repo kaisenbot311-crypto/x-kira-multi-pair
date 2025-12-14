@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion';
 
 export default function RealTimeStats() {
   const [totalSessions, setTotalSessions] = useState<number>(0);
   const [loading, setLoading] = useState(true);
+  const [hasData, setHasData] = useState(false);
   const count = useMotionValue(0);
   const rounded = useTransform(count, (latest) => Math.round(latest));
   const displayCount = useRef<HTMLSpanElement>(null);
@@ -19,27 +20,38 @@ export default function RealTimeStats() {
     return () => unsubscribe();
   }, [rounded]);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await fetch('/api/sessions');
-        if (response.ok) {
-          const data = await response.json();
-          const newTotal = data.total || 0;
-          setTotalSessions(newTotal);
-          animate(count, newTotal, { duration: 1.5, ease: 'easeOut' });
-        }
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching stats:', error);
-        setLoading(false);
+  const fetchStats = useCallback(async () => {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      
+      const response = await fetch('/api/sessions', {
+        signal: controller.signal,
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (response.ok) {
+        const data = await response.json();
+        const newTotal = data.total || 0;
+        setTotalSessions(newTotal);
+        setHasData(true);
+        animate(count, newTotal, { duration: 1.2, ease: 'easeOut' });
       }
-    };
+    } catch (error) {
+      if (!hasData) {
+        console.error('Error fetching stats:', error);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [count, hasData]);
 
+  useEffect(() => {
     fetchStats();
     const interval = setInterval(fetchStats, 15000);
     return () => clearInterval(interval);
-  }, [count]);
+  }, [fetchStats]);
 
   return (
     <motion.div
